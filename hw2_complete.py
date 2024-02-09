@@ -112,24 +112,28 @@ def build_model50k():
 
     inputs = Input(shape=inputShape)
     y = inputs
-    y = layers.Conv2D(32, kernel_size=3, strides=2, padding='same')(y)
+    y = layers.Conv2D(16, kernel_size=3, strides=2, padding='same')(y)
     y = layers.BatchNormalization()(y)
     block1Out = y
     block1Out = layers.Dropout(0.2)(block1Out)
 
-    y = layers.Conv2D(64, kernel_size=3, strides=2, padding='same')(block1Out)
+    y = layers.Conv2D(32, kernel_size=3, strides=2, padding='same')(block1Out)
     y = layers.BatchNormalization()(y)
     y = layers.Dropout(0.2)(y)
 
-    y = layers.Conv2D(128, kernel_size=3, strides=2, padding='same')(y)
+    y = layers.Conv2D(64, kernel_size=3, strides=2, padding='same')(y)
     y = layers.BatchNormalization()(y)
-    block1Out = layers.Conv2D(128, kernel_size=1, strides=4)(block1Out)
+    block1Out = layers.Conv2D(64, kernel_size=1, strides=4)(block1Out)
     block3Out = layers.add([y, block1Out])
     block3Out = layers.Dropout(0.2)(block3Out)
 
-    y = layers.MaxPool2D(pool_size=(4, 4), strides=(4, 4))(block3Out)
+    y = layers.Conv2D(32, kernel_size=3, strides=1, padding='same')(block3Out)
+    y = layers.BatchNormalization()(y)
+    y = layers.Dropout(0.2)(y)
+
+    y = layers.MaxPool2D(pool_size=(4, 4), strides=(4, 4))(y)
     y = layers.Flatten()(y)
-    y = layers.Dense(units=128)(y)
+    y = layers.Dense(units=64)(y)
     y = layers.BatchNormalization()(y)
     y = layers.Dense(units=10)(y)
 
@@ -216,7 +220,7 @@ if __name__ == '__main__':
     model3.compile(optimizer='adam',
                 loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                 metrics=['accuracy'])
-    model3.summary()
+    # model3.summary()
 
     # Run Model
     print("\n\tBegin Model 3")
@@ -229,15 +233,15 @@ if __name__ == '__main__':
     # Build model with 50k parameters
     model50k = build_model50k()
     # Compile the model
-    # model50k.compile(optimizer='adam',
-    #             loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-    #             metrics=['accuracy'])
-    # model50k.summary()
+    model50k.compile(optimizer='adam',
+                loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                metrics=['accuracy'])
+    model50k.summary()
     # model50k.save("best_model.h5")
 
     # Fit model to data
     print("\n\tBegin Model 50k")
-    # model50k.fit(trainImages, trainLabels,
-    #           validation_data=(valImages, valLabels),
-    #          epochs=epochsToRun)
+    model50k.fit(trainImages, trainLabels,
+              validation_data=(valImages, valLabels),
+             epochs=epochsToRun)
     print("\n\tModel 50k Compelete\n")
