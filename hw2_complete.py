@@ -8,7 +8,7 @@ print(f"TensorFlow version: {tf.__version__}\n")
 
 def build_model1():
 
-    inputs = Input(shape=inputShape) # SET THIS UP LATER IN CODE
+    inputs = Input(shape=(32, 32, 3))
     y = inputs
     y = layers.Conv2D(32, kernel_size=3, strides=2, padding='same')(y)
     y = layers.BatchNormalization()(y)
@@ -35,9 +35,9 @@ def build_model1():
 
 def build_model2():
 
-    inputs = Input(shape=inputShape) # SET THIS UP LATER IN CODE
+    inputs = Input(shape=(32, 32, 3))
     y = inputs
-    y = layers.SeparableConv2D(32, kernel_size=3, strides=2, padding='same')(y)
+    y = layers.Conv2D(32, kernel_size=3, strides=2, padding='same')(y)
     y = layers.BatchNormalization()(y)
     y = layers.SeparableConv2D(64, kernel_size=3, strides=2, padding='same')(y)
     y = layers.BatchNormalization()(y)
@@ -62,7 +62,7 @@ def build_model2():
 
 def build_model3():
     
-    inputs = Input(shape=inputShape)
+    inputs = Input(shape=(32, 32, 3))
     y = inputs
     # Block 1
     y = layers.Conv2D(32, kernel_size=3, strides=2, padding='same')(y)
@@ -110,7 +110,7 @@ def build_model3():
 
 def build_model50k():
 
-    inputs = Input(shape=inputShape)
+    inputs = Input(shape=(32, 32, 3))
     y = inputs
     y = layers.Conv2D(16, kernel_size=3, strides=2, padding='same')(y)
     y = layers.BatchNormalization()(y)
@@ -143,7 +143,7 @@ def build_model50k():
 # no training or dataset construction should happen above this line
 if __name__ == '__main__':
 
-    epochsToRun = 50 ## SET TO 50 WHEN DONE
+    epochsToRun = 25 ## SET TO 50 WHEN DONE
 
     seed = 777
     tf.random.set_seed(seed)
@@ -236,8 +236,7 @@ if __name__ == '__main__':
     model50k.compile(optimizer='adam',
                 loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                 metrics=['accuracy'])
-    model50k.summary()
-    # model50k.save("best_model.h5")
+    # model50k.summary()
 
     # Fit model to data
     print("\n\tBegin Model 50k")
@@ -245,3 +244,6 @@ if __name__ == '__main__':
               validation_data=(valImages, valLabels),
              epochs=epochsToRun)
     print("\n\tModel 50k Compelete\n")
+
+    # Save the 50k model as a file
+    model50k.save("best_model.h5")

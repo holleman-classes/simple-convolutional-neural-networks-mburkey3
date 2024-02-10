@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from tensorflow import keras
-from tensorflow.keras import Input, layers
+from keras import Input, layers
 
 
 import sys
